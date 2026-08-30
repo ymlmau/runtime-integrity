@@ -14,7 +14,9 @@ Después crea:
 .runtime-integrity
 ```
 
-Desde ese momento ese archivo es la fuente canónica de configuración runtime de esa instalación.
+Desde ese momento ese archivo es la fuente canónica de la configuración runtime de esa instalación.
+
+Excepción deliberada: `config.manifest` es política del monitor. Al actualizar Runtime Integrity se refresca desde los defaults de la versión instalada más cualquier override explícito en `composer.json`. Esto permite corregir inclusiones/exclusiones sin regenerar la identidad ni reemplazar transportes u otras opciones runtime.
 
 ## 2. Estructura conceptual
 
@@ -90,7 +92,9 @@ Puede habilitarse sin convertir el hostname en identidad.
 
 ## 6. Qué puede modificarse después
 
-Puedes modificar conscientemente el bloque `config` de `.runtime-integrity` para activar/desactivar transportes.
+Puedes modificar conscientemente el bloque `config` de `.runtime-integrity` para activar/desactivar transportes u otras opciones runtime.
+
+No uses `.runtime-integrity` para personalizar `config.manifest`: si necesitas un override de manifiesto, decláralo en `composer.json → extra → ymlmau-runtime-integrity → manifest`, porque esa política se refresca al actualizar el paquete.
 
 No modifiques manualmente:
 

@@ -35,6 +35,19 @@ ok($state1['identity']['installation_id'] === $state2['identity']['installation_
 ok(!isset($state1['identity']['auth']), 'installation identity contains no certificate or private key');
 ok($state2['config']['product_id'] === 'smoke', 'first setup config remains canonical');
 
+// Package-owned manifest policy refreshes across monitor updates without replacing runtime config.
+$stale = $state2;
+$stale['config']['manifest'] = [
+    'include' => ['composer.json', 'web'],
+    'exclude' => ['assets'],
+];
+$store->write($stale);
+$refreshed = $setup->initialize(['product_id' => 'must-not-replace-runtime-product']);
+ok($refreshed['config']['product_id'] === 'smoke', 'manifest refresh preserves runtime product config');
+ok(in_array('assets', $refreshed['config']['manifest']['include'], true), 'manifest policy refresh adds current protected source assets');
+ok(in_array('web/debug', $refreshed['config']['manifest']['exclude'], true), 'manifest policy refresh applies current generated debug exclusion');
+$state2 = $refreshed;
+
 $provider = CryptoFactory::preferred();
 $keys = $provider->generateKeyPair();
 $checker = new IntegrityChecker();
@@ -59,12 +72,15 @@ file_put_contents($root . '/assets/AppAsset.php', "<?php\nclass AppAsset {}\n");
 mkdir($root . '/web', 0700, true);
 mkdir($root . '/web/assets', 0700, true);
 file_put_contents($root . '/web/assets/generated.js', "generated\n");
+mkdir($root . '/web/debug', 0700, true);
+file_put_contents($root . '/web/debug/session.json', "generated debug\n");
 mkdir($root . '/frontend', 0700, true);
 mkdir($root . '/frontend/runtime', 0700, true);
 file_put_contents($root . '/frontend/runtime/cache.tmp', "temporary\n");
 $manifestFiles = $checker->scan($root, Config::defaults()['manifest']['include'], Config::defaults()['manifest']['exclude']);
 ok(isset($manifestFiles['assets/AppAsset.php']), 'source assets directory remains protected');
 ok(!isset($manifestFiles['web/assets/generated.js']), 'published web/assets are excluded');
+ok(!isset($manifestFiles['web/debug/session.json']), 'generated web/debug files are excluded');
 ok(!isset($manifestFiles['frontend/runtime/cache.tmp']), 'advanced runtime directory is excluded');
 
 $report = ReportEvent::create(['schema' => 1, 'event_type' => 'heartbeat']);

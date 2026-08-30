@@ -4,7 +4,7 @@ namespace YmlMau\RuntimeIntegrity;
 final class Config
 {
     const SCHEMA_VERSION = 2;
-    const MONITOR_VERSION = '1.1.1';
+    const MONITOR_VERSION = '1.1.2';
 
     public static function defaults()
     {
@@ -27,7 +27,7 @@ final class Config
             ],
             'manifest' => [
                 'include' => ['composer.json', 'composer.lock', 'yii', 'yii.bat', 'common', 'frontend', 'backend', 'console', 'controllers', 'models', 'components', 'helpers', 'services', 'modules', 'views', 'widgets', 'commands', 'config', 'assets', 'web'],
-                'exclude' => ['vendor', 'runtime', 'web/assets', 'web/uploads', 'uploads', 'cache', 'logs', 'sessions', 'frontend/runtime', 'frontend/web/assets', 'frontend/web/uploads', 'backend/runtime', 'backend/web/assets', 'backend/web/uploads', 'console/runtime', 'common/runtime', '.git', 'node_modules', '.env', '.env.local', 'config/local.php', 'config/*-local.php', '*.log', '*.tmp', '*.cache', '*.bak', '*.swp', '.DS_Store', 'Thumbs.db', '.runtime-integrity', '.runtime-integrity*', '.runtime-integrity.baseline'],
+                'exclude' => ['vendor', 'runtime', 'web/assets', 'web/debug', 'web/uploads', 'uploads', 'cache', 'logs', 'sessions', 'frontend/runtime', 'frontend/web/assets', 'frontend/web/debug', 'frontend/web/uploads', 'backend/runtime', 'backend/web/assets', 'backend/web/debug', 'backend/web/uploads', 'console/runtime', 'common/runtime', '.git', 'node_modules', '.env', '.env.local', 'config/local.php', 'config/*-local.php', '*.log', '*.tmp', '*.cache', '*.bak', '*.swp', '.DS_Store', 'Thumbs.db', '.runtime-integrity', '.runtime-integrity*', '.runtime-integrity.baseline'],
             ],
         ];
     }
@@ -42,6 +42,13 @@ final class Config
             }
         }
         return $base;
+    }
+
+    public static function refreshPackagePolicy(array $runtimeConfig, array $seedConfig)
+    {
+        $current = self::merge(self::defaults(), $seedConfig);
+        $runtimeConfig['manifest'] = $current['manifest'];
+        return $runtimeConfig;
     }
 
     public static function validateTransport(array $transport, $urlKey)

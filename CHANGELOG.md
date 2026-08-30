@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.2 - 2026-08-30
+
+- Exclude generated `web/debug` paths (and Yii Advanced frontend/backend equivalents) from protected manifests.
+- Refresh package-owned `manifest.include` / `manifest.exclude` policy when Runtime Integrity is upgraded, while preserving installation UUID and runtime configuration such as product, transports, and privacy settings.
+- CLI `verify` now uses the refreshed package manifest immediately, even before the application is opened after an upgrade.
+- Added `verify --details` to print up to 100 modified, added, and deleted paths for precise diagnostics.
+- No change to developer baseline signing, installation identity, transport semantics, or fail-open behavior.
+
 ## 1.1.1 - 2026-08-30
 
 - Fix Yii generated-path exclusions across Windows/Linux deployments.
@@ -7,12 +15,6 @@
 - Protect root `assets/` source code such as Yii AssetBundle classes instead of treating it as generated output.
 - Apply filename-only exclusion patterns such as `*.log`, `.DS_Store`, and `Thumbs.db` at any protected depth.
 - No change to installation identity, baseline authorization model, or transport behavior.
-
-## 1.1.1 - 2026-08-30
-
-- Corrige exclusiones de manifiesto para directorios generados anidados. Patrones simples como `assets`, `runtime`, `cache`, `logs`, `uploads` y `node_modules` ahora excluyen ese nombre como segmento en cualquier profundidad, por ejemplo `web/assets/...`.
-- Patrones de archivo sin ruta como `*.log`, `*.tmp` y `*.bak` ahora se aplican también al basename de archivos anidados.
-- Evita falsos `ADDED/DELETED` al migrar el mismo build entre Windows y Linux por recursos generados que nunca debieron formar parte del baseline.
 
 ## 1.1.0 — 2026-08-30
 

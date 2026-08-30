@@ -1,5 +1,0 @@
-* text=auto eol=lf
-*.php text eol=lf
-*.json text eol=lf
-*.md text eol=lf
-bin/runtime-integrity text eol=lf

@@ -92,3 +92,13 @@ El helper `examples/generate-developer-keys.php` se usa únicamente en el entorn
 - API y correo son opcionales e independientes.
 - No envía código fuente ni contenido de archivos.
 - El runtime es independiente de Windows/Linux; las rutas de documentación muestran ambos ejemplos cuando aplica.
+
+
+### Diagnóstico detallado de diferencias
+
+Cuando `verify` devuelve `MODIFIED`, use `vendor/bin/runtime-integrity verify --root=<ruta> --details` para listar hasta 100 rutas por categoría sin cambiar el baseline.
+
+
+### Manifest policy updates
+
+`manifest.include` and `manifest.exclude` are package-owned policy and are refreshed on monitor upgrades. Installation identity and runtime transport/privacy configuration remain preserved.

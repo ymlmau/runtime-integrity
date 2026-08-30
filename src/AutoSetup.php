@@ -16,6 +16,8 @@ final class AutoSetup
         if (is_array($existing)) {
             $migrated = $this->migrate($existing);
             $migrated = (new IdentityManager())->ensure($migrated);
+            $existingConfig = isset($migrated['config']) && is_array($migrated['config']) ? $migrated['config'] : Config::defaults();
+            $migrated['config'] = Config::refreshPackagePolicy($existingConfig, $seedConfig);
             if ($migrated !== $existing) {
                 $this->store->write($migrated);
             }

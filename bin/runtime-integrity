@@ -19,6 +19,13 @@ foreach ($autoloadCandidates as $autoload) {
     }
 }
 
+
+function ri_has_flag($name)
+{
+    global $argv;
+    return in_array('--' . $name, $argv, true);
+}
+
 function ri_arg($name, $default = null)
 {
     global $argv;
@@ -64,11 +71,12 @@ function ri_runtime_document($root)
 
 function ri_effective_config($root)
 {
+    $seed = ri_seed_config($root);
     $document = ri_runtime_document($root);
     if (is_array($document) && !empty($document['config']) && is_array($document['config'])) {
-        return $document['config'];
+        return Config::refreshPackagePolicy($document['config'], $seed);
     }
-    return ri_seed_config($root);
+    return $seed;
 }
 
 function ri_key_contents($path)
@@ -179,6 +187,20 @@ try {
         fwrite(STDOUT, 'MODIFIED_COUNT ' . count($comparison['modified']) . PHP_EOL);
         fwrite(STDOUT, 'ADDED_COUNT ' . count($comparison['added']) . PHP_EOL);
         fwrite(STDOUT, 'DELETED_COUNT ' . count($comparison['deleted']) . PHP_EOL);
+
+        if (ri_has_flag('details')) {
+            foreach (['modified' => 'MODIFIED_FILE', 'added' => 'ADDED_FILE', 'deleted' => 'DELETED_FILE'] as $key => $label) {
+                $count = 0;
+                foreach ($comparison[$key] as $path) {
+                    if ($count >= 100) {
+                        fwrite(STDOUT, $label . '_TRUNCATED ' . (count($comparison[$key]) - $count) . PHP_EOL);
+                        break;
+                    }
+                    fwrite(STDOUT, $label . ' ' . $path . PHP_EOL);
+                    $count++;
+                }
+            }
+        }
         exit(3);
     }
 
