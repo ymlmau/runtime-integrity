@@ -1,12 +1,12 @@
-# YMLMau Runtime Integrity 1.1.1
+# YMLMau Runtime Integrity 1.1.3
 
-Extensión privada para Yii2/PHP 7.4+ que mantiene una identidad lógica de instalación mediante UUID, compara hashes del aplicativo contra un baseline autorizado y puede reportar estados mediante relay de correo y/o API HTTP.
+Extensión Composer para Yii2/PHP 7.4+ que mantiene una identidad lógica de instalación mediante UUID, compara hashes del aplicativo contra un baseline autorizado y puede reportar estados mediante relay de correo y/o API HTTP.
 
 ## Si es tu primera vez usando Composer
 
 No copies este paquete manualmente dentro de `vendor/`.
 
-`vendor/` es administrado por Composer. Durante desarrollo el paquete se guarda fuera del aplicativo y Composer lo instala. Más adelante puede publicarse en un repositorio privado.
+`vendor/` es administrado por Composer. Durante desarrollo el paquete se guarda fuera del aplicativo y Composer lo instala. Actualmente puede distribuirse desde su repositorio público etiquetado o desde una fuente Composer/VCS equivalente.
 
 Empieza aquí:
 
@@ -15,7 +15,7 @@ Empieza aquí:
 3. [Clave del desarrollador y baseline](docs/03-CLAVES-Y-BASELINE.md)
 4. [Configuración](docs/04-CONFIGURACION.md)
 5. [Doctor, verify y pruebas](docs/05-PRUEBAS-Y-DOCTOR.md)
-6. [Repositorio privado / distribución](docs/06-REPOSITORIO-PRIVADO.md)
+6. [Repositorio / distribución](docs/06-REPOSITORIO-PRIVADO.md)
 7. [Actualizaciones](docs/07-ACTUALIZACIONES.md)
 8. [Problemas comunes](docs/08-TROUBLESHOOTING.md)
 9. [Resumen de arquitectura](docs/09-ARQUITECTURA.md)
@@ -64,7 +64,7 @@ Una copia completa de una instancia conserva normalmente el mismo `installation_
 
 ## Criptografía: una sola finalidad
 
-Runtime Integrity v1.1.1 **no genera certificados ni pares de claves por instalación**.
+Runtime Integrity v1.1.3 **no genera certificados ni pares de claves por instalación**.
 
 La criptografía se utiliza únicamente para responder:
 

@@ -1,6 +1,8 @@
 <?php
 namespace YmlMau\RuntimeIntegrity\Transport;
 
+use YmlMau\RuntimeIntegrity\Config;
+
 final class HttpJsonTransport implements TransportInterface
 {
     private $name;
@@ -50,7 +52,7 @@ final class HttpJsonTransport implements TransportInterface
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
                 'Accept: application/json',
-                'User-Agent: YmlMau-Runtime-Integrity/1.1.1',
+                'User-Agent: YmlMau-Runtime-Integrity/' . Config::MONITOR_VERSION,
             ],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 1,
@@ -75,7 +77,7 @@ final class HttpJsonTransport implements TransportInterface
         $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
-                'header' => "Content-Type: application/json\r\nAccept: application/json\r\nUser-Agent: YmlMau-Runtime-Integrity/1.1.1\r\n",
+                'header' => "Content-Type: application/json\r\nAccept: application/json\r\nUser-Agent: YmlMau-Runtime-Integrity/" . Config::MONITOR_VERSION . "\r\n",
                 'content' => $json,
                 'timeout' => $this->timeout,
                 'ignore_errors' => true,

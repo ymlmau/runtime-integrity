@@ -53,7 +53,6 @@ final class Pulse
         $config = isset($document['config']) && is_array($document['config']) ? $document['config'] : Config::defaults();
 
         $configFingerprint = 'sha256:' . hash('sha256', CanonicalJson::encode($config));
-        $previousConfigFingerprint = isset($document['state']['config_fingerprint']) ? $document['state']['config_fingerprint'] : null;
         $document['state']['config_fingerprint'] = $configFingerprint;
 
         if ($this->retryPending($document, $config)) {
@@ -207,11 +206,6 @@ final class Pulse
             $document['state']['next_due'] = $this->normalDue();
         }
 
-        if ($previousConfigFingerprint !== null && !hash_equals($previousConfigFingerprint, $configFingerprint)) {
-            if ($this->hasNewlyUsableTransport($config)) {
-                $document['state']['next_due'] = min($document['state']['next_due'], time() + 60);
-            }
-        }
 
         $this->store->write($document);
     }
@@ -281,9 +275,4 @@ final class Pulse
         return time() + random_int(43200, 86400);
     }
 
-    private function hasNewlyUsableTransport(array $config)
-    {
-        return (!empty($config['email']['enabled']) && Config::validateTransport($config['email'], 'relay_url'))
-            || (!empty($config['api']['enabled']) && Config::validateTransport($config['api'], 'url'));
-    }
 }

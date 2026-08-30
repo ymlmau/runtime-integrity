@@ -4,7 +4,7 @@ namespace YmlMau\RuntimeIntegrity;
 final class Config
 {
     const SCHEMA_VERSION = 2;
-    const MONITOR_VERSION = '1.1.2';
+    const MONITOR_VERSION = '1.1.3';
 
     public static function defaults()
     {

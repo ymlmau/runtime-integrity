@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.3 - 2026-08-30
+
+- Fix pulse retry scheduling so a failed transport always retains the approved 12–24 hour retry window instead of being overwritten by a 60-second config-change shortcut.
+- Remove the ineffective config-change reschedule shortcut; runtime transport configuration remains canonical in `.runtime-integrity` and normal pulse cadence applies unless a delivery failure schedules a retry.
+- Make the HTTP `User-Agent` report the current `Config::MONITOR_VERSION` instead of a stale hard-coded version.
+- Add pulse regression QA covering disabled transports, 6.5–7.5 day normal jitter, non-blocking `flock()` contention, 12–24 hour failed-delivery retry, and modified→clean recovery state.
+- No change to installation identity, baseline format/signing, or manifest policy.
+
 ## 1.1.2 - 2026-08-30
 
 - Exclude generated `web/debug` paths (and Yii Advanced frontend/backend equivalents) from protected manifests.
