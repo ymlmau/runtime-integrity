@@ -1,0 +1,9 @@
+# Minimal OpenSSL configuration used only as a compatibility fallback for
+# RSA key generation when the host PHP installation cannot locate openssl.cnf.
+
+[ req ]
+default_bits = 2048
+distinguished_name = req_distinguished_name
+prompt = no
+
+[ req_distinguished_name ]
