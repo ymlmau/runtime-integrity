@@ -2,13 +2,7 @@
 
 ## Actualizar Runtime Integrity
 
-Ejemplo:
-
-```text
-1.0.x → 1.1.0
-```
-
-Composer reemplaza el código dentro de:
+Composer reemplaza:
 
 ```text
 vendor/ymlmau/runtime-integrity
@@ -20,36 +14,24 @@ pero conserva:
 .runtime-integrity
 ```
 
-Por tanto se conservan:
+Por tanto permanecen el `installation_id`, configuración runtime y estado mínimo.
 
-```text
-installation_id UUID
-configuración runtime
-estado mínimo
-```
+La política `manifest.include/exclude` sí se refresca desde la versión instalada del monitor y sus overrides explícitos en `composer.json`.
 
-### Migración desde v1.0.x
+## Migración desde schema 1
 
-v1.0.x podía guardar un par criptográfico por instalación. v1.1.0 ya no lo utiliza.
-
-Al leer un estado schema 1, v1.1.0:
-
-```text
-preserva installation_id
-elimina identity.auth
-elimina un pending_event firmado antiguo si existía
-actualiza schema → 2
-```
-
-No genera un UUID nuevo.
+Runtime Integrity 1.1.x preserva `installation_id`, elimina `identity.auth` obsoleto, descarta un `pending_event` firmado antiguo si existía y actualiza el schema a 2. No genera un UUID nuevo.
 
 ## Actualizar el aplicativo
 
-1. termina cambios autorizados;
-2. actualiza dependencias necesarias;
-3. genera nuevo baseline firmado;
-4. verifica `CLEAN`;
-5. despliega código + baseline;
-6. conserva `.runtime-integrity` de la instalación.
+1. terminar cambios autorizados;
+2. resolver Composer en el entorno de build;
+3. fijar `composer.lock`;
+4. generar un nuevo `build_id` y baseline firmado;
+5. verificar `CLEAN`;
+6. desplegar código + `composer.json` + `composer.lock` + baseline;
+7. conservar `.runtime-integrity` si es la misma instalación lógica;
+8. ejecutar `composer install` en destino;
+9. ejecutar `doctor` y `verify --details`.
 
-El baseline anterior no se conserva como historial dentro de Runtime Integrity.
+No regenere el baseline en el servidor cliente para “aceptar” diferencias encontradas allí.

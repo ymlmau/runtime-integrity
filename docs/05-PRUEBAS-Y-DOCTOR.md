@@ -1,4 +1,4 @@
-# 05 — Doctor, verify y prueba inicial
+# 05 — Doctor, verify y QA
 
 ## 1. `doctor`
 
@@ -23,12 +23,10 @@ PHP_OK 7.4.33
 YII_BOOTSTRAP_REGISTERED
 IDENTITY_OK 6bf1da54-...
 PRODUCT_ID_OK avaluos
-CRYPTO_VERIFY_OK ed25519
+CRYPTO_VERIFY_OK rsa-sha256
 BASELINE_OK 2026.08.30.1
 DOCTOR_OK
 ```
-
-`CRYPTO_VERIFY_OK` significa que este runtime puede **verificar** el baseline. No intenta generar claves de instalación.
 
 ## 2. `verify`
 
@@ -36,13 +34,13 @@ DOCTOR_OK
 vendor/bin/runtime-integrity verify --root=RUTA_DEL_APLICATIVO
 ```
 
-Correcto:
+Sano:
 
 ```text
 CLEAN
 ```
 
-Con cambio protegido:
+Con incidencia:
 
 ```text
 MODIFIED
@@ -51,24 +49,52 @@ ADDED_COUNT 0
 DELETED_COUNT 0
 ```
 
-## 3. Prueba controlada
+Para rutas concretas:
 
-1. confirma `CLEAN`;
-2. modifica temporalmente un archivo protegido en una copia de prueba;
-3. confirma `MODIFIED`;
-4. restaura exactamente el archivo;
-5. confirma `CLEAN`.
+```bash
+vendor/bin/runtime-integrity verify --root=RUTA --details
+```
 
-## 4. Reinstalar vendor no cambia identidad
+## 3. QA mínimo de integridad
 
-En QA:
+En una copia/control de pruebas:
 
-1. guarda el `installation_id`;
-2. reinstala `vendor` por Composer;
-3. arranca Yii;
-4. confirma el mismo UUID.
+1. confirmar `CLEAN`;
+2. modificar un archivo protegido → `MODIFIED_FILE`;
+3. restaurarlo exactamente → `CLEAN`;
+4. agregar un archivo dentro de una ruta protegida → `ADDED_FILE`;
+5. eliminarlo → `CLEAN`;
+6. mover temporalmente un archivo protegido → `DELETED_FILE`;
+7. restaurarlo → `CLEAN`;
+8. crear archivos dentro de exclusiones como `runtime/`, `web/assets/`, `web/debug/`, `*.log` y `config/*-local.php` → debe seguir `CLEAN`.
 
-## 5. Códigos importantes
+## 4. QA del pulse incluido en el paquete
+
+Windows:
+
+```bat
+php vendor\ymlmau\runtime-integrity\tests\pulse.php
+```
+
+Linux:
+
+```bash
+php vendor/ymlmau/runtime-integrity/tests/pulse.php
+```
+
+Debe terminar:
+
+```text
+PULSE PASS
+```
+
+Esta prueba cubre transportes deshabilitados, jitter 6.5–7.5 días, `flock()`, retry 12–24 h, fail-open e incidente→recuperación.
+
+## 5. Reinstalar vendor no cambia identidad
+
+Guarda el `installation_id`, reinstala dependencias con Composer, arranca Yii y confirma el mismo UUID. La identidad vive fuera de `vendor`.
+
+## 6. Códigos importantes
 
 ```text
 STATE_NOT_INITIALIZED

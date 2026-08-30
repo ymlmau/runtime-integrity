@@ -42,3 +42,11 @@
 ## 1.0.0
 
 - Primera implementación del paquete.
+
+## Documentation on main after 1.1.3
+
+- Align documentation with the public Composer/GitHub distribution flow.
+- Document Windows↔Linux deployment using the exact authorized `composer.lock` bytes and `composer install` on the destination.
+- Correct manifest documentation: root `assets/` source remains protected while generated `web/assets/` and `web/debug/` are excluded.
+- Add release QA checklist and real pulse validation guidance.
+- No runtime code change; release tag `v1.1.3` remains the validated functional release.

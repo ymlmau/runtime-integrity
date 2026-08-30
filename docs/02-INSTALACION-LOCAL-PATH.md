@@ -1,10 +1,10 @@
 # 02 — Primera instalación local usando Composer `path`
 
-Este método permite probar Runtime Integrity antes de publicarlo en un repositorio privado. Composer administra `vendor`; nosotros no copiamos archivos manualmente allí.
+Este método sirve para desarrollar o probar Runtime Integrity antes de consumirlo desde su repositorio remoto. Composer administra `vendor`; no copies archivos manualmente allí.
 
 ## Windows
 
-Una estructura posible:
+Ejemplo:
 
 ```text
 C:\packages\runtime-integrity\composer.json
@@ -13,16 +13,16 @@ C:\proyectos\mi-aplicativo\composer.json
 
 ## Linux
 
-Una estructura posible:
+Ejemplo:
 
 ```text
 /opt/packages/runtime-integrity/composer.json
 /var/www/mi-aplicativo/composer.json
 ```
 
-## Paso 1 — Descomprimir el paquete fuera del aplicativo
+## Paso 1 — Descomprimir fuera del aplicativo
 
-La carpeta indicada por Composer debe contener directamente:
+La carpeta del paquete debe contener directamente:
 
 ```text
 composer.json
@@ -30,9 +30,9 @@ src/
 bin/
 ```
 
-## Paso 2 — Modificar el `composer.json` DEL APLICATIVO
+## Paso 2 — Agregar el repositorio `path` al composer.json DEL APLICATIVO
 
-Agrega el repositorio local. Windows:
+Windows:
 
 ```json
 {
@@ -59,12 +59,10 @@ Si ya existen otros repositorios, consérvalos.
 Dentro del `require` existente:
 
 ```json
-"ymlmau/runtime-integrity": "1.1.1"
+"ymlmau/runtime-integrity": "1.1.3"
 ```
 
-## Paso 4 — Plugin de Yii2
-
-Composer debe permitir el plugin oficial de Yii2:
+## Paso 4 — Permitir el plugin oficial Yii2
 
 ```json
 "config": {
@@ -76,9 +74,9 @@ Composer debe permitir el plugin oficial de Yii2:
 
 Si ya existe, no lo dupliques.
 
-## Paso 5 — Instalar solo Runtime Integrity
+## Paso 5 — Instalar/actualizar Runtime Integrity
 
-Windows o Linux, desde la raíz del aplicativo:
+Desde la raíz del aplicativo:
 
 ```bash
 composer update ymlmau/runtime-integrity --with-dependencies
@@ -91,24 +89,22 @@ vendor/ymlmau/runtime-integrity/
 vendor/bin/runtime-integrity
 ```
 
-En Windows también puede existir un wrapper `.bat` en `vendor/bin`.
-
 ## Paso 6 — Confirmar bootstrap
 
-Composer/Yii2 actualiza automáticamente:
+Composer/Yii2 genera:
 
 ```text
 vendor/yiisoft/extensions.php
 ```
 
-Debe aparecer:
+Runtime Integrity debe aparecer registrado allí mediante su bootstrap. No edites ese archivo manualmente.
 
-```text
-YmlMau\RuntimeIntegrity\Bootstrap
+## Paso 7 — Migrar a distribución remota
+
+Cuando terminen las pruebas locales, elimina el repositorio `path` del aplicativo y consume la release pública/remota. Después ejecuta una actualización dirigida a Runtime Integrity y confirma con:
+
+```bash
+composer show ymlmau/runtime-integrity
 ```
 
-No edites ese archivo manualmente.
-
-## Paso 7 — Todavía no necesitas certificados de instalación
-
-No hay ninguna clave que generar por cliente. Solo necesitas tener una clave de desarrollador para firmar el baseline. Continúa con [03 — Clave del desarrollador y baseline](03-CLAVES-Y-BASELINE.md).
+La fuente ya no debe apuntar a la carpeta local.

@@ -1,12 +1,12 @@
 # 03 — Clave del desarrollador y baseline autorizado
 
-## 1. Esta es la única pareja de claves del diseño v1.1
+## 1. Una sola pareja de claves
 
-No existe una pareja de claves por cliente o instalación. Genera una pareja de firma controlada por ti para autorizar builds. El `product_id` está incluido en el baseline y Runtime Integrity verifica que coincida con el producto configurado.
+No existe una pareja de claves por cliente o instalación. El desarrollador conserva una pareja para autorizar builds. El `product_id` forma parte del baseline y debe coincidir con el producto configurado.
 
 ## 2. Generar la clave del desarrollador una sola vez
 
-Después de instalar Runtime Integrity mediante Composer, desde la raíz del aplicativo puedes usar el helper documental incluido:
+Después de instalar Runtime Integrity:
 
 ### Windows
 
@@ -20,7 +20,7 @@ php vendor\ymlmau\runtime-integrity\examples\generate-developer-keys.php C:\runt
 php vendor/ymlmau/runtime-integrity/examples/generate-developer-keys.php /secure/runtime-keys
 ```
 
-Se crearán:
+Se crean:
 
 ```text
 developer-private.key
@@ -28,109 +28,70 @@ developer-public.key
 developer-algorithm.txt
 ```
 
-El script se niega a sobrescribir claves existentes.
+El helper se niega a sobrescribir claves existentes.
 
 ### Regla crítica
 
-```text
-developer-private.key
-```
+`developer-private.key` NO debe estar dentro del aplicativo, `vendor`, repositorio público/cliente, ZIP de entrega ni servidor cliente.
 
-NO debe estar dentro del aplicativo, `vendor`, repositorio del cliente, ZIP de entrega ni servidor del cliente.
+## 3. Configuración inicial
 
-Guárdala fuera del paquete de distribución y con respaldo seguro.
-
-## 3. Leer el algoritmo y la clave pública
-
-Ejemplo:
-
-```text
-developer-algorithm.txt
-ed25519
-```
-
-`developer-public.key` contiene una cadena de una sola línea cuando se usa Ed25519.
-
-## 4. Sembrar la configuración inicial en el composer.json DEL APLICATIVO
-
-Agrega dentro de `extra`:
+Ejemplo dentro de `composer.json → extra` del aplicativo:
 
 ```json
-"extra": {
-    "ymlmau-runtime-integrity": {
-        "product_id": "avaluos",
-        "developer_auth": {
-            "algorithm": "ed25519",
-            "public_key": "PEGA_AQUI_EL_CONTENIDO_DE_DEVELOPER_PUBLIC.KEY"
-        },
-        "email": {
-            "enabled": false,
-            "relay_url": null
-        },
-        "api": {
-            "enabled": false,
-            "url": null
-        },
-        "privacy": {
-            "include_hostname": false
-        }
-    }
+"ymlmau-runtime-integrity": {
+  "product_id": "avaluos",
+  "developer_auth": {
+    "algorithm": "rsa-sha256",
+    "public_key": "CLAVE_PUBLICA"
+  },
+  "email": {"enabled": false, "relay_url": null},
+  "api": {"enabled": false, "url": null},
+  "privacy": {"include_hostname": false}
 }
 ```
 
-Si `extra` ya contiene otras configuraciones, no las borres. Agrega la clave `ymlmau-runtime-integrity` dentro del objeto `extra` existente.
+Puede usarse `ed25519` cuando Sodium está disponible o `rsa-sha256` mediante OpenSSL.
 
-## 5. `product_id` debe ser estable
+## 4. `product_id` debe ser estable
 
-Ejemplo:
+Correcto:
 
 ```json
-"product_id": "avaluos"
+"product_id": "portuflow-app"
 ```
 
-No uses:
+No uses IP, hostname, cliente o número de servidor como identidad del producto.
 
-```text
-portuflow-cliente-a
-portuflow-servidor-2
-192.168.1.50
-```
+## 5. Generar baseline
 
-La instalación y el entorno tienen identificadores diferentes.
+Hazlo cuando la distribución esté exactamente como será autorizada: código terminado, `composer.json` y `composer.lock` definitivos.
 
-## 6. Generar el baseline
-
-El baseline se genera cuando la distribución está EXACTAMENTE como será autorizada.
-
-Antes de ejecutarlo termina tus cambios de código y Composer.
-
-Ejemplo Windows:
+Windows:
 
 ```bat
 vendor\bin\runtime-integrity build ^
   --root=C:\proyectos\avaluos ^
   --product=avaluos ^
   --build=2026.08.30.1 ^
-  --algorithm=ed25519 ^
+  --algorithm=rsa-sha256 ^
   --private-key=C:\runtime-keys\developer-private.key ^
   --public-key=C:\runtime-keys\developer-public.key
 ```
 
-En Linux:
+Linux:
 
 ```bash
 vendor/bin/runtime-integrity build \
   --root=/var/build/avaluos \
   --product=avaluos \
   --build=2026.08.30.1 \
-  --algorithm=ed25519 \
+  --algorithm=rsa-sha256 \
   --private-key=/secure/runtime-keys/developer-private.key \
   --public-key=/secure/runtime-keys/developer-public.key
 ```
 
-El comando comprueba opcionalmente que la clave privada coincida con la pública antes de escribir el baseline.
-
-Resultado esperado:
+Resultado aproximado:
 
 ```text
 BASELINE_WRITTEN .../.runtime-integrity.baseline
@@ -140,15 +101,16 @@ FILES ...
 ROOT_HASH sha256:...
 ```
 
-## 7. Qué entra por defecto en el baseline
+## 6. Qué entra por defecto
 
-Incluye cuando existen:
+Cuando existen, se protegen archivos raíz relevantes y directorios de código habituales, por ejemplo:
 
 ```text
 composer.json
 composer.lock
 yii
 yii.bat
+assets/
 common/
 frontend/
 backend/
@@ -166,12 +128,19 @@ config/
 web/
 ```
 
-Excluye contenido operativo como:
+La política excluye contenido generado u operativo, entre otros:
 
 ```text
 vendor/
 runtime/
-assets/
+web/assets/
+web/debug/
+frontend/runtime/
+backend/runtime/
+frontend/web/assets/
+backend/web/assets/
+frontend/web/debug/
+backend/web/debug/
 uploads/
 cache/
 logs/
@@ -184,10 +153,14 @@ node_modules/
 .runtime-integrity*
 ```
 
-Estas listas pueden ajustarse por producto, pero no agregues exclusiones únicamente para ocultar una incidencia.
+`assets/` de raíz NO se excluye por defecto porque en Yii2 Basic suele contener código fuente como `AppAsset.php`.
+
+`migrations/` no forma parte del conjunto protegido por defecto; un producto puede omitirlo deliberadamente del despliegue de producción. Si un producto decide protegerlo, debe declararlo explícitamente como override de manifiesto.
+
+## 7. Regla de despliegue
+
+El baseline representa bytes autorizados. Si se genera en Windows y se despliega en Linux, los archivos protegidos deben conservar sus bytes. No regenere `composer.lock` en el servidor destino y no utilice `composer update` allí para reconstruir una entrega autorizada.
 
 ## 8. El baseline no es Git
 
-Contiene hashes necesarios para comparar la distribución autorizada. No guarda versiones anteriores, diffs, commits ni copias del código fuente.
-
-Una actualización autorizada reemplaza `.runtime-integrity.baseline`.
+No guarda versiones anteriores, diffs, commits ni copias del código. Una actualización autorizada reemplaza `.runtime-integrity.baseline`.
