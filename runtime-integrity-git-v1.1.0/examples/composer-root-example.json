@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "ymlmau/runtime-integrity": "1.1.1"
+    "ymlmau/runtime-integrity": "1.1.0"
   },
   "config": {
     "allow-plugins": {

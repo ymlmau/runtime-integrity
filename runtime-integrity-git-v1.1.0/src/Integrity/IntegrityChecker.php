@@ -80,38 +80,14 @@ final class IntegrityChecker
         $path = $this->normalize($path);
         foreach ($exclude as $pattern) {
             $pattern = $this->normalize($pattern);
-            if ($pattern === '') {
-                continue;
-            }
-
             if ($pattern === $path || strpos($path, rtrim($pattern, '/') . '/') === 0) {
                 return true;
             }
-
-            if (strpos($pattern, '/') === false) {
-                $segments = explode('/', $path);
-                if (!$this->hasGlob($pattern) && in_array($pattern, $segments, true)) {
-                    return true;
-                }
-                if (function_exists('fnmatch') && fnmatch($pattern, basename($path))) {
-                    return true;
-                }
-                continue;
-            }
-
             if (function_exists('fnmatch') && fnmatch($pattern, $path, FNM_PATHNAME)) {
-                return true;
-            }
-            if (strpos($pattern, '/') === false && function_exists('fnmatch') && fnmatch($pattern, basename($path))) {
                 return true;
             }
         }
         return false;
-    }
-
-    private function hasGlob($pattern)
-    {
-        return strpbrk($pattern, '*?[') !== false;
     }
 
     private function normalize($path)

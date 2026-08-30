@@ -50,7 +50,7 @@ final class HttpJsonTransport implements TransportInterface
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
                 'Accept: application/json',
-                'User-Agent: YmlMau-Runtime-Integrity/1.1.1',
+                'User-Agent: YmlMau-Runtime-Integrity/1.1.0',
             ],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 1,
@@ -75,7 +75,7 @@ final class HttpJsonTransport implements TransportInterface
         $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
-                'header' => "Content-Type: application/json\r\nAccept: application/json\r\nUser-Agent: YmlMau-Runtime-Integrity/1.1.1\r\n",
+                'header' => "Content-Type: application/json\r\nAccept: application/json\r\nUser-Agent: YmlMau-Runtime-Integrity/1.1.0\r\n",
                 'content' => $json,
                 'timeout' => $this->timeout,
                 'ignore_errors' => true,

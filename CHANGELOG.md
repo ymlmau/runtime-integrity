@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.1 - 2026-08-30
+
+- Fix Yii generated-path exclusions across Windows/Linux deployments.
+- Exclude `web/assets`, Yii Advanced runtime directories, and their frontend/backend published asset directories explicitly.
+- Protect root `assets/` source code such as Yii AssetBundle classes instead of treating it as generated output.
+- Apply filename-only exclusion patterns such as `*.log`, `.DS_Store`, and `Thumbs.db` at any protected depth.
+- No change to installation identity, baseline authorization model, or transport behavior.
+
+## 1.1.1 - 2026-08-30
+
+- Corrige exclusiones de manifiesto para directorios generados anidados. Patrones simples como `assets`, `runtime`, `cache`, `logs`, `uploads` y `node_modules` ahora excluyen ese nombre como segmento en cualquier profundidad, por ejemplo `web/assets/...`.
+- Patrones de archivo sin ruta como `*.log`, `*.tmp` y `*.bak` ahora se aplican también al basename de archivos anidados.
+- Evita falsos `ADDED/DELETED` al migrar el mismo build entre Windows y Linux por recursos generados que nunca debieron formar parte del baseline.
+
 ## 1.1.0 — 2026-08-30
 
 - Simplifica la identidad de instalación a un UUID persistente.

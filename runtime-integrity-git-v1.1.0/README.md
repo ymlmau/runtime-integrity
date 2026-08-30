@@ -1,4 +1,4 @@
-# YMLMau Runtime Integrity 1.1.1
+# YMLMau Runtime Integrity 1.1.0
 
 Extensión privada para Yii2/PHP 7.4+ que mantiene una identidad lógica de instalación mediante UUID, compara hashes del aplicativo contra un baseline autorizado y puede reportar estados mediante relay de correo y/o API HTTP.
 
@@ -64,7 +64,7 @@ Una copia completa de una instancia conserva normalmente el mismo `installation_
 
 ## Criptografía: una sola finalidad
 
-Runtime Integrity v1.1.1 **no genera certificados ni pares de claves por instalación**.
+Runtime Integrity v1.1.0 **no genera certificados ni pares de claves por instalación**.
 
 La criptografía se utiliza únicamente para responder:
 

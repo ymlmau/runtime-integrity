@@ -59,7 +59,7 @@ Si ya existen otros repositorios, consérvalos.
 Dentro del `require` existente:
 
 ```json
-"ymlmau/runtime-integrity": "1.1.1"
+"ymlmau/runtime-integrity": "1.1.0"
 ```
 
 ## Paso 4 — Plugin de Yii2

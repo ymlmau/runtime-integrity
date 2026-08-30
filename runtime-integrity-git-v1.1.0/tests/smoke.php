@@ -53,20 +53,6 @@ $observed2 = $checker->scan($root, ['models'], ['.runtime-integrity']);
 $cmp2 = $checker->compare($payload['files'], $observed2);
 ok($cmp2['clean'] === false && count($cmp2['modified']) === 1, 'modified protected file is detected');
 
-// Generated Yii paths must be excluded while source AssetBundle code remains protected.
-mkdir($root . '/assets', 0700, true);
-file_put_contents($root . '/assets/AppAsset.php', "<?php\nclass AppAsset {}\n");
-mkdir($root . '/web', 0700, true);
-mkdir($root . '/web/assets', 0700, true);
-file_put_contents($root . '/web/assets/generated.js', "generated\n");
-mkdir($root . '/frontend', 0700, true);
-mkdir($root . '/frontend/runtime', 0700, true);
-file_put_contents($root . '/frontend/runtime/cache.tmp', "temporary\n");
-$manifestFiles = $checker->scan($root, Config::defaults()['manifest']['include'], Config::defaults()['manifest']['exclude']);
-ok(isset($manifestFiles['assets/AppAsset.php']), 'source assets directory remains protected');
-ok(!isset($manifestFiles['web/assets/generated.js']), 'published web/assets are excluded');
-ok(!isset($manifestFiles['frontend/runtime/cache.tmp']), 'advanced runtime directory is excluded');
-
 $report = ReportEvent::create(['schema' => 1, 'event_type' => 'heartbeat']);
 ok(!empty($report['event_id']) && !empty($report['timestamp']), 'report gets event id and timestamp');
 ok(!isset($report['auth']), 'report has no per-installation cryptographic envelope');

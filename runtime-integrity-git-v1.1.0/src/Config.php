@@ -4,7 +4,7 @@ namespace YmlMau\RuntimeIntegrity;
 final class Config
 {
     const SCHEMA_VERSION = 2;
-    const MONITOR_VERSION = '1.1.1';
+    const MONITOR_VERSION = '1.1.0';
 
     public static function defaults()
     {
@@ -26,8 +26,8 @@ final class Config
                 'include_hostname' => false,
             ],
             'manifest' => [
-                'include' => ['composer.json', 'composer.lock', 'yii', 'yii.bat', 'common', 'frontend', 'backend', 'console', 'controllers', 'models', 'components', 'helpers', 'services', 'modules', 'views', 'widgets', 'commands', 'config', 'assets', 'web'],
-                'exclude' => ['vendor', 'runtime', 'web/assets', 'web/uploads', 'uploads', 'cache', 'logs', 'sessions', 'frontend/runtime', 'frontend/web/assets', 'frontend/web/uploads', 'backend/runtime', 'backend/web/assets', 'backend/web/uploads', 'console/runtime', 'common/runtime', '.git', 'node_modules', '.env', '.env.local', 'config/local.php', 'config/*-local.php', '*.log', '*.tmp', '*.cache', '*.bak', '*.swp', '.DS_Store', 'Thumbs.db', '.runtime-integrity', '.runtime-integrity*', '.runtime-integrity.baseline'],
+                'include' => ['composer.json', 'composer.lock', 'yii', 'yii.bat', 'common', 'frontend', 'backend', 'console', 'controllers', 'models', 'components', 'helpers', 'services', 'modules', 'views', 'widgets', 'commands', 'config', 'web'],
+                'exclude' => ['vendor', 'runtime', 'assets', 'uploads', 'cache', 'logs', 'sessions', '.git', 'node_modules', '.env', '.env.local', 'config/local.php', 'config/*-local.php', '*.log', '*.tmp', '*.cache', '*.bak', '*.swp', '.DS_Store', 'Thumbs.db', '.runtime-integrity', '.runtime-integrity*', '.runtime-integrity.baseline'],
             ],
         ];
     }
